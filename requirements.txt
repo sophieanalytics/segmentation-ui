@@ -3,5 +3,4 @@ numpy
 pandas
 matplotlib
 seaborn
-pickle
 squarify
