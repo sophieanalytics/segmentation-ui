@@ -11,14 +11,80 @@ st.set_page_config(
     initial_sidebar_state='expanded'
 )
 
-st.title("Customer Segmentation")
-menu = ["Segmentation App", "Project Overview"]
+st.title("🧠 Customer Segmentation System")
+menu = ["Project Overview", "Segmentation App" ]
 choice = st.sidebar.radio('Menu', menu)
 
 
 
 if choice == 'Project Overview':
     st.subheader('Tran Thi Kim Phung & Ta Van Hoang')
+    st.markdown("""
+            We are developing a **Customer Segmentation System** designed to empower businesses with data-driven insights into their customer base.
+
+            By leveraging data provided by the store—such as purchase history, frequency, demographics, and engagement patterns—our system identifies **distinct customer groups** through advanced segmentation techniques.
+
+            With this powerful insight, businesses can:
+
+            - 🎯 **Tailor marketing strategies** to specific customer personas  
+            - 🛍️ **Optimize product offerings** to match customer needs  
+            - 💬 **Enhance customer care** through personalized experiences  
+            - 🔁 **Improve retention and loyalty** by understanding behavioral patterns  
+
+            This system transforms raw customer data into **actionable strategies**, enabling **smarter decisions** and **sustainable growth**.
+            """)
+    st.subheader('Methodology')
+    st.image('image/methodology.jpg')
+    
+    st.subheader('Dataset')
+    st.image('image/2025-04-11 19.06.55.jpg')
+    
+    st.subheader('KMeans Clustering')
+    st.markdown("""
+            KMeans is an unsupervised machine learning algorithm used to automatically group similar data points into distinct clusters.
+            
+            In the context of customer segmentation, KMeans helps businesses:
+            - Discover hidden customer groups based on behavior and demographics
+            - Understand which features (e.g., spending, frequency) define each group
+            - Personalize marketing and services by targeting each segment effectively 
+               
+                """)
+    st.markdown('With this dataset, the optimal number of clusters appears to be 5, since that''s where the elbow is most pronounced.')
+    st.image('image/2025-04-11 19.06.50.jpg')
+    
+    st.markdown("""
+                This bubble chart highlights key customer groups based on how recently they purchased and how much they tend to spend
+                """)
+    st.image('image/2025-04-11 19.06.35.jpg')
+
+
+    st.markdown("""
+        ### ✅ Segmentation Complete!
+
+        The model has been successfully trained and has identified **5 distinct customer groups** based on purchasing behavior.
+
+        ---
+
+        📊 These groups include:  
+        - **VIP**  
+        - **Active**  
+        - **Potential**  
+        - **Inactive**  
+        - **Lost**
+
+        ---
+
+        🔄 Now it’s time to **experience the product** by inputting new data with 3 required columns:
+
+        - **R** – Recency: Number of days since the last purchase  
+        - **F** – Frequency: Number of purchases  
+        - **M** – Monetary: Total amount spent
+
+        ---
+
+        👉 Please proceed to the **next section** to upload your data and discover which segment your customers belong to!
+        """)
+
 elif choice == 'Segmentation App':
     st.subheader('Welcome to our product — we invite you to explore and enjoy the experience!')
     # add image
@@ -26,21 +92,38 @@ elif choice == 'Segmentation App':
     
     # data methods
     st.markdown('## First, Please choose how to provide data: ')
-    
+
     if "manual_data" not in st.session_state:
         st.session_state["manual_data"] = []
     
     df = None
-    input_method = st.radio('Input method', ['Upload CSV file', 'Enter data manually'])
+    input_method = st.radio('Input method', ['Enter data manually', 'Upload CSV file'])
     
     if input_method == 'Upload CSV file':
-        st.markdown('##### Please provide a CSV file that includes the following columns: Recency, Frequency, and Monetary')
+        st.markdown('##### Please try with sample data or provide a CSV file that includes the following columns: Recency, Frequency, and Monetary')
+         # dropdown with sample data
+        sample_option = st.selectbox("Choose a sample dataset:", ["None", "Sample"])
+        # upload csv
         uploaded_csv = st.file_uploader('Upload a CSV file', type = ['csv'])
-        if uploaded_csv is not None: 
+
+        
+        # Sample datasets
+        sample_1 = pd.DataFrame({
+            'Recency':   [10, 45, 3, 90, 25, 100,200,300,130,200,90, 25, 0,0],
+            'Frequency': [5, 1, 10, 2, 3, 10,2,5,10,30,50,60, 10,3],
+            'Monetary': [500, 100, 1000, 150, 300, 50,20,30,10,40,200,600,10, 200]
+        })
+        
+        if uploaded_csv is not None:
+            df = pd.read_csv(uploaded_csv)
+        elif sample_option == "Sample":
+            df = sample_1     
+
+        if df is not None: 
             try:
                 st.subheader('Result:')
                 #load csv
-                df = pd.read_csv(uploaded_csv)
+                # df = pd.read_csv(uploaded_csv)
                 st.success('File uploaded successfully!')
             except Exception as e:
                 st.error(f'error reading file: {e}')
@@ -71,7 +154,7 @@ elif choice == 'Segmentation App':
                 st.session_state['manual_data'] = []
                 st.success('Manual data cleared')
     
-    if (input_method == "Upload CSV file" and uploaded_csv is not None) or \
+    if (input_method == "Upload CSV file" and df is not None) or \
         (input_method == "Enter data manually" and st.session_state["manual_data"]):
         st.markdown('## Now, you can start running segmentation by clicking button as below: ')
         if st.button('Run segmentation'):    
