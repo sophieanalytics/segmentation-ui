@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle 
 import squarify 
+from streamlit_option_menu import option_menu
+import pyarrow
 
 st.set_page_config(
     page_title='Customer Segmentation',
@@ -13,12 +15,49 @@ st.set_page_config(
 
 st.title("🧠 Customer Segmentation System")
 menu = ["Project Overview", "Segmentation App" ]
-choice = st.sidebar.radio('Menu', menu)
 
+# choice = st.sidebar.radio('MENU', menu)
 
+# Sidebar menu
+with st.sidebar:
+    choice = option_menu(
+        menu_title=None,  # No title
+        options=["Project Overview", "Segmentation App"],
+        # icons=["house", "bi bi-bar-chart", "list-task", "search", "info-circle"],
+        icons = ['house', 'list-task'],
+        default_index=0,  # Default to "Kết Quả"
+        orientation="vertical",
+        styles={
+            "container": {"padding": "10px", "background-color": "#0f0f0f", "border-radius": "10px"},
+            "icon": {"color": "white", "font-size": "18px"},
+            "nav-link": {
+                "font-size": "16px",
+                "text-align": "left",
+                "margin": "0px",
+                "color": "#fff",
+                "padding": "10px 15px",
+                "border-radius": "6px"
+            },
+            "nav-link-selected": {
+                "background-color": "#FF4B4B",  # This is the red highlight
+                "color": "white"
+            }
+        }
+    )
+    
+# Footer
+st.sidebar.markdown(
+    """
+    <div style='text-align: center; color: gray; font-size: 16px; line-height: 1.5;'>
+        Made by <b>Tran T. Kim Phung & Ta Van Hoang</b><br>
+        Instructed by <b>Khuat Thuy Phuong</b> ❤️ <br>
+        April 2025
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 if choice == 'Project Overview':
-    st.subheader('Tran Thi Kim Phung & Ta Van Hoang')
     st.markdown("""
             We are developing a **Customer Segmentation System** designed to empower businesses with data-driven insights into their customer base.
 
@@ -33,14 +72,25 @@ if choice == 'Project Overview':
 
             This system transforms raw customer data into **actionable strategies**, enabling **smarter decisions** and **sustainable growth**.
             """)
-    st.subheader('Methodology')
-    st.image('image/methodology.jpg')
     
-    st.subheader('Dataset')
-    st.image('image/2025-04-11 19.06.55.jpg')
+    tab1, tab2, tab3 = st.tabs(['Methodology', 'Data Exploration', 'Kmeans Model'])
     
-    st.subheader('KMeans Clustering')
-    st.markdown("""
+    with tab1:
+        st.subheader('Methodology')
+        st.image('image/methodology.jpg')
+    
+    with tab2:
+        st.subheader('Dataset')
+        st.image('image/2025-04-11 19.06.55.jpg')
+        
+        st.subheader('Charts')
+        st.image('image/explore1.jpg')
+        st.image('image/explore2.jpg')
+        st.image('image/explore3.jpg')
+    
+    with tab3:
+        st.subheader('KMeans Clustering')
+        st.markdown("""
             KMeans is an unsupervised machine learning algorithm used to automatically group similar data points into distinct clusters.
             
             In the context of customer segmentation, KMeans helps businesses:
@@ -49,42 +99,43 @@ if choice == 'Project Overview':
             - Personalize marketing and services by targeting each segment effectively 
                
                 """)
-    st.markdown('With this dataset, the optimal number of clusters appears to be 5, since that''s where the elbow is most pronounced.')
-    st.image('image/2025-04-11 19.06.50.jpg')
+        st.markdown('With this dataset, the optimal number of clusters appears to be 5, since that''s where the elbow is most pronounced.')
+        st.image('image/2025-04-11 19.06.50.jpg')
     
-    st.markdown("""
+        st.markdown("""
                 This bubble chart highlights key customer groups based on how recently they purchased and how much they tend to spend
                 """)
-    st.image('image/2025-04-11 19.06.35.jpg')
+        st.image('image/2025-04-11 19.06.35.jpg')
+
+        st.markdown("""
+            ### ✅ Segmentation Complete!
+
+            The model has been successfully trained and has identified **5 distinct customer groups** based on purchasing behavior.
+
+            ---
+
+            📊 These groups include:  
+            - **VIP**  
+            - **Active**  
+            - **Potential**  
+            - **Inactive**  
+            - **Lost**
+
+            ---
+
+            🔄 Now it’s time to **experience the product** by inputting new data with 3 required columns:
+
+            - **R** – Recency: Number of days since the last purchase  
+            - **F** – Frequency: Number of purchases  
+            - **M** – Monetary: Total amount spent
+
+            ---
+
+            👉 Please proceed to the **next section** to upload your data and discover which segment your customers belong to!
+            """)
 
 
-    st.markdown("""
-        ### ✅ Segmentation Complete!
-
-        The model has been successfully trained and has identified **5 distinct customer groups** based on purchasing behavior.
-
-        ---
-
-        📊 These groups include:  
-        - **VIP**  
-        - **Active**  
-        - **Potential**  
-        - **Inactive**  
-        - **Lost**
-
-        ---
-
-        🔄 Now it’s time to **experience the product** by inputting new data with 3 required columns:
-
-        - **R** – Recency: Number of days since the last purchase  
-        - **F** – Frequency: Number of purchases  
-        - **M** – Monetary: Total amount spent
-
-        ---
-
-        👉 Please proceed to the **next section** to upload your data and discover which segment your customers belong to!
-        """)
-
+    
 elif choice == 'Segmentation App':
     st.subheader('Welcome to our product — we invite you to explore and enjoy the experience!')
     # add image
