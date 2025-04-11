@@ -5,3 +5,5 @@ matplotlib
 seaborn
 squarify
 scikit-learn
+streamlit_option_menu
+pyarrow
