@@ -182,19 +182,26 @@ elif choice == 'Segmentation App':
     elif input_method == 'Enter data manually':
         st.markdown('#### Manual Data Entry')
         with st.form('manual_form'):
-            recency = st.number_input('Recency', min_value = 0, step = 1)
-            frequency = st.number_input('Frequency', min_value = 1, step = 1)
-            monetary = st.number_input('Monetary', min_value = 0.0, step = 0.01)
+            recency = st.number_input('Recency (<= 730 days)', min_value = 0, step = 1)
+            frequency = st.number_input('Frequency (<= 1000 orders)', min_value = 1, step = 1)
+            monetary = st.number_input('Monetary (require greater than 0)', min_value = 0.0, step = 0.01)
             # submit button
             submitted = st.form_submit_button('➕ Add Entry')
         
-        if submitted:
-            st.session_state['manual_data'].append({
-                'Recency': recency,
-                'Frequency': frequency,
-                'Monetary': monetary
-            })
-            st.success('Entry added!')
+        if submitted:   
+            if recency > 730:
+                st.error("❌ Recency must be within 2 years (≤ 730 days).")
+            elif frequency > 1000:
+                st.error("❌ Frequency cannot exceed 1000.")
+            elif monetary <= 0:
+                st.error("❌ Monetary must be greater than 0.")
+            else:
+                st.success(f"✅ Entry added successfully!\nRecency: {recency}, Frequency: {frequency}, Monetary: {monetary}")
+                st.session_state['manual_data'].append({
+                        'Recency': recency,
+                        'Frequency': frequency,
+                        'Monetary': monetary
+                    })
             
         if st.session_state['manual_data']:
             df = pd.DataFrame(st.session_state['manual_data'])
